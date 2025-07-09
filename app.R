@@ -181,7 +181,7 @@ server <- function(input, output, session) {
                                 "<b>Departamento:</b>", Departamento, "<br>",
                                 "<b>Distrito:</b>", Distrito, "<br>",
                                 "<b>Docente:</b>", Identificador_Docente, "<br>",
-                                "<b>ID:</b>", id_escuela, "<br>", "<b>Grupo:</b>", grupo_t)) %>%
+                                "<b>ID:</b>", id_escuela, "<br>",  "<b>Clúster:</b>", grupo_cluster ,"<b>Grupo:</b>", grupo_t)) %>%
       addLayersControl(baseGroups = c("Calles", "Satélite"), options = layersControlOptions(collapsed = FALSE))
   })
   output$tablaDatos <- renderDataTable({
