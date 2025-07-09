@@ -1,6 +1,5 @@
 
 
-
 # =================================================================
 # 1. INSTALAR Y CARGAR LIBRERÍAS
 # =================================================================
@@ -60,16 +59,19 @@ gdirectiva <- read_csv2(url_directiva)
 df_gdirectiva_full <- gdirectiva %>%
   dplyr::select(
     start, end, `Código de CE`, `Nombre completo CE`, Zona, Departamento, Distrito,
-    `Nombre completo director(a):`, `Director interino:`, `Sexo:`, `Edad:`,
+    `D. Código del encuestador/a`,`Nombre completo director(a):`, `Director interino:`, `Sexo:`, `Edad:`,
+    `G. Tome fotografía de la ficha llena con firma y sello del director del CE/ informante calificado_URL`,
     `_H. Punto GPS del CE_latitude`, `_H. Punto GPS del CE_longitude`
   ) %>%
   dplyr::rename(
     codigo_ce = `Código de CE`,
     nombre_ce = `Nombre completo CE`,
+    codigo_encuestador=`D. Código del encuestador/a`,
     nombre_director = `Nombre completo director(a):`,
     es_interino = `Director interino:`,
     sexo_director = `Sexo:`,
     edad_director = `Edad:`,
+    Foto_ficha=`G. Tome fotografía de la ficha llena con firma y sello del director del CE/ informante calificado_URL` ,
     latitud_raw = `_H. Punto GPS del CE_latitude`,
     longitud_raw = `_H. Punto GPS del CE_longitude`
   ) %>%
@@ -77,7 +79,6 @@ df_gdirectiva_full <- gdirectiva %>%
     latitud = latitud_raw / 1000000,
     longitud = longitud_raw / 1000000
   ) %>%
-  # --- NUEVO: Filtro de fecha para los datos de Gestión Directiva ---
   dplyr::filter(as.Date(end) >= as.Date("2025-07-07"))
 
 df_gdirectiva_map <- df_gdirectiva_full %>%
@@ -201,10 +202,19 @@ server <- function(input, output, session) {
       addMarkers(lng = ~longitud, lat = ~latitud,
                  popup = ~paste("<b>CE:</b>", nombre_ce, "<br>",
                                 "<b>Código:</b>", codigo_ce, "<br>",
+                                "<b>Código_Encuestador:</b>",codigo_encuestador, "<br>",
                                 "<b>Departamento:</b>", Departamento, "<br>",
                                 "<b>Distrito:</b>",  Distrito, "<br>",
                                 "<b>Zona:</b>",  Zona, "<br>",
-                                "<b>Director:</b>", nombre_director)) %>%
+                                "<b>Director:</b>", nombre_director, "<br><hr>",
+                                # --- CAMBIO CLAVE: MOSTRAR IMAGEN ---
+                                # Se crea una etiqueta <img> de HTML para visualizar la foto.
+                                # También es un enlace que abre la imagen en una nueva pestaña.
+                                "<b>Ficha:</b><br>",
+                                "<a href='", Foto_ficha, "' target='_blank'>",
+                                "<img src='", Foto_ficha, "' width='200px'>",
+                                "</a>"
+                 )) %>%
       addLayersControl(baseGroups = c("Calles", "Satélite"), options = layersControlOptions(collapsed = FALSE))
   })
   output$tablaDirectiva <- renderDataTable({
@@ -216,3 +226,4 @@ server <- function(input, output, session) {
 # 5. EJECUTAR LA APLICACIÓN
 # =================================================================
 shinyApp(ui, server)
+
