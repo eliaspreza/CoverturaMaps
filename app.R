@@ -25,6 +25,7 @@ df_teach_full <- teach %>%
   dplyr::select(
     starttime, endtime, `Nombre y ID de Centro Educativo`, `Nombre del centro educativo`,
     Zona, Departamento, Distrito,`Seleccione el identificador del docente según el orden en el que lo ha abordado dentro del Centro Educativo`,
+    `ID Observador`,
     `Cluster (oculto)`, `GrupoN (oculto)`, `GruposT (oculto)`,
     `_Coordenadas GPS del Centro Educativo_latitude`, `_Coordenadas GPS del Centro Educativo_longitude`
   ) %>%
@@ -32,6 +33,7 @@ df_teach_full <- teach %>%
     id_escuela = `Nombre y ID de Centro Educativo`,
     nombre_escuela = `Nombre del centro educativo`,
     Identificador_Docente= `Seleccione el identificador del docente según el orden en el que lo ha abordado dentro del Centro Educativo`,
+    Observador_id=`ID Observador`,
     grupo_cluster = `Cluster (oculto)`,
     grupo_n = `GrupoN (oculto)`,
     grupo_t = `GruposT (oculto)`,
@@ -174,6 +176,7 @@ server <- function(input, output, session) {
       addMarkers(lng = ~longitud, lat = ~latitud,
                  popup = ~paste("<b>Escuela:</b>", nombre_escuela, "<br>",
                                 "<b>Fecha:</b>", endtime, "<br>",
+                                "<b>Observador id:</b>", Observador_id, "<br>",
                                 "<b>Departamento:</b>", Departamento, "<br>",
                                 "<b>Distrito:</b>", Distrito, "<br>",
                                 "<b>Docente:</b>", Identificador_Docente, "<br>",
